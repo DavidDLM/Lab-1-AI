@@ -17,6 +17,12 @@ class Framework:
     def actions(this, s):
         pass
 
+    def findRed(this, l, c):
+        pass
+
+    def replaceColor(this, l, c):
+        pass
+
     def stepCost(this, l, c):
         pass
 
@@ -28,6 +34,25 @@ class Framework:
 class BreadthFirstType(Framework):
     def __init__(this, graph):
         super().__init__(graph)
+
+    # Find element in nested list START
+    # https://stackoverflow.com/questions/33938488/finding-the-index-of-an-element-in-nested-lists-in-python
+    def findRed(list, char):
+        for subList in list:
+            if char in subList:
+                return (subList.index(char), list.index(subList))
+        raise ValueError("'{char}' is not in list".format(char=char))
+
+    # Find element in nested list and replace it
+    # https://stackoverflow.com/questions/51318249/python-how-do-i-replace-value-in-a-nested-list
+    def replaceColor(list, char):
+        for subList in list:
+            if char in subList:
+                sublistIndex = subList.index(char)
+                listIndex = list.index(subList)
+                list[listIndex][sublistIndex] = 0
+                return list
+        raise ValueError("'{char}' is not in list".format(char=char))
 
     # BFS Algorithm
     # https://favtutor.com/blogs/breadth-first-search-python
@@ -65,13 +90,31 @@ class AStarType(Framework):
         raise ValueError("'{char}' is not in list".format(char=char))
 
     # Max values for steps
-
     def maxValues(list, char):
         for subList in list:
             if char in subList:
                 sublistIndex = subList.index(char)
                 listIndex = list.index(subList)
                 list[listIndex][sublistIndex] = 100
+                return list
+        raise ValueError("'{char}' is not in list".format(char=char))
+
+    # Find element in nested list START
+    # https://stackoverflow.com/questions/33938488/finding-the-index-of-an-element-in-nested-lists-in-python
+    def findRed(list, char):
+        for subList in list:
+            if char in subList:
+                return (subList.index(char), list.index(subList))
+        raise ValueError("'{char}' is not in list".format(char=char))
+
+    # Find element in nested list and replace it
+    # https://stackoverflow.com/questions/51318249/python-how-do-i-replace-value-in-a-nested-list
+    def replaceColor(list, char):
+        for subList in list:
+            if char in subList:
+                sublistIndex = subList.index(char)
+                listIndex = list.index(subList)
+                list[listIndex][sublistIndex] = 0
                 return list
         raise ValueError("'{char}' is not in list".format(char=char))
 

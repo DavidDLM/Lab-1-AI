@@ -10,27 +10,6 @@ import math
 from collections import deque
 
 
-# Find element in nested list START
-# https://stackoverflow.com/questions/33938488/finding-the-index-of-an-element-in-nested-lists-in-python
-def findRed(list, char):
-    for subList in list:
-        if char in subList:
-            return (subList.index(char), list.index(subList))
-    raise ValueError("'{char}' is not in list".format(char=char))
-
-
-# Find element in nested list and replace it
-# https://stackoverflow.com/questions/51318249/python-how-do-i-replace-value-in-a-nested-list
-def replaceColor(list, char):
-    for subList in list:
-        if char in subList:
-            sublistIndex = subList.index(char)
-            listIndex = list.index(subList)
-            list[listIndex][sublistIndex] = 0
-            return list
-    raise ValueError("'{char}' is not in list".format(char=char))
-
-
 # Get rectangle based on MAP_SIZE
 def getRect(x, y):
     return x * MAP_SIZE + 1, y * MAP_SIZE + 1, MAP_SIZE - 2, MAP_SIZE - 2
@@ -78,15 +57,15 @@ win = pygame.display.set_mode((SCREEN_HEIGHT*MAP_SIZE, SCREEN_WIDTH*MAP_SIZE))
 clock = pygame.time.Clock()
 
 try:
-    start = findRed(pixels, 2)
+    start = BreadthFirstType.findRed(pixels, 2)
 except:
     print("No hay punto de inicio.")
 try:
-    grid = replaceColor(pixels, 2)
+    grid = BreadthFirstType.replaceColor(pixels, 2)
 except:
     print("El punto de inicio no ha sido encontrado.")
 try:
-    grid = replaceColor(pixels, 3)
+    grid = BreadthFirstType.replaceColor(pixels, 3)
 except:
     pass
 

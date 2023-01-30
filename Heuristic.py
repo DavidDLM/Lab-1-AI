@@ -7,7 +7,7 @@ from scipy.spatial.distance import hamming
 
 # Manhattan distance: sum of horizontal and vertical distances between points
 def manhattan(x, y):
-    return sum(abs(val1-val2) for val1, val2 in zip(x, y))
+    return abs(x[0] - y[0]) + abs(x[1] - y[1])
 
 
 # Hamming distance: sum of corresponding elements that differ between vectors

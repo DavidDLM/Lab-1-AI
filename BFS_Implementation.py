@@ -15,6 +15,16 @@ def getRect(x, y):
     return x * MAP_SIZE + 1, y * MAP_SIZE + 1, MAP_SIZE - 2, MAP_SIZE - 2
 
 
+# Get goal based on mouseclick
+def getGoal():
+    x, y = pygame.mouse.get_pos()
+    gX, gY = x // MAP_SIZE, y // MAP_SIZE
+    pygame.draw.rect(win, pygame.Color('green'), getRect(gX, gY))
+    click = pygame.mouse.get_pressed()
+    if click[0]:
+        return (gX, gY)
+
+
 def nextNodes(x, y):
     # Check next nodes in nested function
     def nextNodeCheck(x, y):
@@ -26,16 +36,6 @@ def nextNodes(x, y):
     movement = [1, 0], [-1, 0], [0,
                                  1], [0, -1], [1, 1], [-1, 1], [1, -1], [-1, -1]
     return [(x + dx, y + dy) for dx, dy in movement if nextNodeCheck(x + dx, y + dy)]
-
-
-# Get goal based on mouseclick
-def getGoal():
-    x, y = pygame.mouse.get_pos()
-    gX, gY = x // MAP_SIZE, y // MAP_SIZE
-    pygame.draw.rect(win, pygame.Color('green'), getRect(gX, gY))
-    click = pygame.mouse.get_pressed()
-    if click[0]:
-        return (gX, gY)
 
 
 # Screen variables

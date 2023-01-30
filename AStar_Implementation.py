@@ -1,26 +1,17 @@
-# A* search
-# Inteligencia Artificial
-# Mario de Leon 19019
-
+import pygame
+from heapq import *
 from Reader import *
 from Framework import *
-from heapq import *
-import pygame
-import sys
 
 
-# Get rectangle based on MAP_SIZE
 def getRect(x, y):
     return x * MAP_SIZE + 1, y * MAP_SIZE + 1, MAP_SIZE - 2, MAP_SIZE - 2
 
 
 def nextNodes(x, y):
     # Check next nodes in nested function
-    def nextNodeCheck(x, y):
-        if 0 <= x < SCREEN_HEIGHT and 0 <= y < SCREEN_WIDTH and not grid[y][x]:
-            return True
-        else:
-            return False
+    def nextNodeCheck(
+        x, y): return True if 0 <= x < SCREEN_HEIGHT and 0 <= y < SCREEN_WIDTH else False
     # Movement = right, left, up, down, diagonal: north east, north west, south east, south west
     movement = [1, 0], [-1, 0], [0,
                                  1], [0, -1], [1, 1], [-1, 1], [1, -1], [-1, -1]
@@ -42,10 +33,6 @@ SCREEN_HEIGHT = 100
 SCREEN_WIDTH = 100
 MAP_SIZE = 10
 
-# Load image source
-img = Reader(SCREEN_HEIGHT, SCREEN_WIDTH, "maze.PNG")
-pixels = img.transformer()
-
 # init pygame
 pygame.init
 # Title
@@ -55,29 +42,27 @@ win = pygame.display.set_mode((SCREEN_HEIGHT*MAP_SIZE, SCREEN_WIDTH*MAP_SIZE))
 # Timer
 clock = pygame.time.Clock()
 
+# Prepare grid
+img = Reader(SCREEN_HEIGHT, SCREEN_WIDTH, "maze.PNG")
+pixels = img.transformer()
+start = AStarType.findRed(pixels, 2)
+grid = AStarType.replaceColor(pixels, 2)
+
 try:
-    start = AStarType.findRed(pixels, 2)
-except:
-    print("No hay punto de inicio.")
-try:
-    grid = AStarType.replaceColor(pixels, 2)
-except:
-    print("El punto de inicio no ha sido encontrado.")
-try:
+    # Replace color green
     grid = AStarType.replaceColor(pixels, 3)
 except:
     pass
 
-valuesGrid = grid
-valuesGrid = AStarType.stepCost(valuesGrid, 0)
-valuesGrid = AStarType.maxValues(valuesGrid, 1)
+grid = AStarType.maxValues(grid, 1)
+grid = AStarType.stepCost(grid, 0)
+# print(grid)
 
 # Dictionary of lists in grid
 dictionary = {}
 for y, row in enumerate(grid):
     for x, col in enumerate(row):
         dictionary[(x, y)] = dictionary.get((x, y), []) + nextNodes(x, y)
-
 
 # A* variables
 # Recordatorio para despues: 2 en pixels = rojo
@@ -90,32 +75,22 @@ background = pygame.transform.scale(
     background, (SCREEN_HEIGHT * MAP_SIZE, SCREEN_WIDTH * MAP_SIZE))
 
 while True:
-    # Escape condition
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit(0)
-    # Draw 2D map
-    # Fill window
+    # fill screen
     win.blit(background, (0, 0))
-    # Draw pixels
-    # BFS to goal
-    mouse = getGoal()
-    if mouse and not grid[mouse[1]][mouse[0]]:
-        visited = AStarType.solve(start, mouse, dictionary)
-        goal = mouse
 
-    # Draw path in real time
-    head, segment = goal, goal
-    while segment:
-        pygame.draw.rect(win, pygame.Color('magenta'), getRect(
-            *segment), MAP_SIZE, border_radius=0)
-        segment = visited[segment]
-    pygame.draw.rect(win, pygame.Color('green'), getRect(
-        *head), border_radius=0)
-    pygame.draw.rect(win, pygame.Color('red'), getRect(
-        *start), border_radius=0)
-    # Update display
+    # bfs, get path to mouse click
+    mouse_pos = getGoal()
+    if mouse_pos:
+        visited = AStarType.solve(start, mouse_pos, dictionary)
+        goal = mouse_pos
+
+    # draw path
+    path_head, path_segment = goal, goal
+    while path_segment and path_segment in visited:
+        pygame.draw.rect(win, pygame.Color('blue'), getRect(*path_segment))
+        path_segment = visited[path_segment]
+    pygame.draw.rect(win, pygame.Color('green'), getRect(*start))
+    pygame.draw.rect(win, pygame.Color('magenta'), getRect(*path_head))
+
     pygame.display.flip()
-    # Set FPS
-    clock.tick(60)
+    clock.tick(30)

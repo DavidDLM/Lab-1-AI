@@ -1,21 +1,16 @@
+# A* search
+# Inteligencia Artificial
+# Mario de Leon 19019
+
 import pygame
 from heapq import *
 from Reader import *
 from Framework import *
 
 
+# Get rectangle based on MAP_SIZE
 def getRect(x, y):
     return x * MAP_SIZE + 1, y * MAP_SIZE + 1, MAP_SIZE - 2, MAP_SIZE - 2
-
-
-def nextNodes(x, y):
-    # Check next nodes in nested function
-    def nextNodeCheck(
-        x, y): return True if 0 <= x < SCREEN_HEIGHT and 0 <= y < SCREEN_WIDTH else False
-    # Movement = right, left, up, down, diagonal: north east, north west, south east, south west
-    movement = [1, 0], [-1, 0], [0,
-                                 1], [0, -1], [1, 1], [-1, 1], [1, -1], [-1, -1]
-    return [(grid[y + dy][x + dx], (x + dx, y + dy)) for dx, dy in movement if nextNodeCheck(x + dx, y + dy)]
 
 
 # Get goal based on mouseclick
@@ -26,6 +21,16 @@ def getGoal():
     click = pygame.mouse.get_pressed()
     if click[0]:
         return (gX, gY)
+
+
+def nextNodes(x, y):
+    # Check next nodes in nested function
+    def nextNodeCheck(
+        x, y): return True if 0 <= x < SCREEN_HEIGHT and 0 <= y < SCREEN_WIDTH else False
+    # Movement = right, left, up, down, diagonal: north east, north west, south east, south west
+    movement = [1, 0], [-1, 0], [0,
+                                 1], [0, -1], [1, 1], [-1, 1], [1, -1], [-1, -1]
+    return [(grid[y + dy][x + dx], (x + dx, y + dy)) for dx, dy in movement if nextNodeCheck(x + dx, y + dy)]
 
 
 # Screen variables
@@ -45,9 +50,14 @@ clock = pygame.time.Clock()
 # Prepare grid
 img = Reader(SCREEN_HEIGHT, SCREEN_WIDTH, "maze.PNG")
 pixels = img.transformer()
-start = AStarType.findRed(pixels, 2)
-grid = AStarType.replaceColor(pixels, 2)
-
+try:
+    start = BreadthFirstType.findRed(pixels, 2)
+except:
+    print("No hay punto de inicio.")
+try:
+    grid = BreadthFirstType.replaceColor(pixels, 2)
+except:
+    print("El punto de inicio no ha sido encontrado.")
 try:
     # Replace color green
     grid = AStarType.replaceColor(pixels, 3)

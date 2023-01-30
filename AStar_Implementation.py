@@ -54,6 +54,7 @@ try:
 except:
     pass
 
+# Random grid values for A* cost
 grid = AStarType.maxValues(grid, 1)
 grid = AStarType.stepCost(grid, 0)
 # print(grid)
@@ -75,22 +76,30 @@ background = pygame.transform.scale(
     background, (SCREEN_HEIGHT * MAP_SIZE, SCREEN_WIDTH * MAP_SIZE))
 
 while True:
-    # fill screen
+    # Escape condition
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit(0)
+    # Draw 2D map
+    # Fill window
     win.blit(background, (0, 0))
+    # Draw pixels
+    # A* to goal
+    mouse = getGoal()
+    if mouse:
+        visited = AStarType.solve(start, mouse, dictionary)
+        goal = mouse
 
-    # bfs, get path to mouse click
-    mouse_pos = getGoal()
-    if mouse_pos:
-        visited = AStarType.solve(start, mouse_pos, dictionary)
-        goal = mouse_pos
+    # Draw path in real time
+    segment, head = goal, goal
+    while segment and segment in visited:
+        pygame.draw.rect(win, pygame.Color('magenta'), getRect(*segment))
+        segment = visited[segment]
+    pygame.draw.rect(win, pygame.Color('red'), getRect(*start))
+    pygame.draw.rect(win, pygame.Color('green'), getRect(*head))
 
-    # draw path
-    path_head, path_segment = goal, goal
-    while path_segment and path_segment in visited:
-        pygame.draw.rect(win, pygame.Color('blue'), getRect(*path_segment))
-        path_segment = visited[path_segment]
-    pygame.draw.rect(win, pygame.Color('green'), getRect(*start))
-    pygame.draw.rect(win, pygame.Color('magenta'), getRect(*path_head))
-
+    # Update display
     pygame.display.flip()
-    clock.tick(30)
+    # Set FPS
+    clock.tick(60)

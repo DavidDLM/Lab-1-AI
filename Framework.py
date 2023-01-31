@@ -104,22 +104,24 @@ class DepthFirstType(Framework):
     # DFS Algorithm
     # https://favtutor.com/blogs/depth-first-search-python
     # Parameters: start: starting point, goal: end point, map: graph obtained from Task 1.1
-    def solve(start, goal, path=[], visited=set()):
-        adjList = []
-        path.append(start)
-        visited.add(start)
-        if start == goal:
-            return path
-        for (neighbour, weight) in adjList[start]:
-            if neighbour not in visited:
-                result = DepthFirstType.solve(neighbour, goal, path, visited)
-                if result is not None:
-                    return result
-        path.pop()
-        return None
+    def solve(start, goal, map):
+        queue = deque([start])
+        visited = {start: None}
+
+        while queue:
+            currentNode = queue.popleft()
+            if currentNode == goal:
+                break
+
+            nextNodes = map[currentNode]
+            for nextNode in nextNodes:
+                if nextNode not in visited:
+                    queue.append(nextNode)
+                    visited[nextNode] = currentNode
+        return queue, visited
+
+
 # A* Class
-
-
 class AStarType(Framework):
     def __init__(this, graph):
         super().__init__(graph)

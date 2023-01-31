@@ -1,12 +1,13 @@
-# A* search
+# Breadth first search
 # Inteligencia Artificial
 # Mario de Leon 19019
 
 from Reader import *
 from Framework import *
-from heapq import *
 import pygame
 import sys
+import math
+from collections import deque
 
 
 # Get rectangle based on MAP_SIZE
@@ -34,7 +35,7 @@ def nextNodes(x, y):
     # Movement = right, left, up, down, diagonal: north east, north west, south east, south west
     movement = [1, 0], [-1, 0], [0,
                                  1], [0, -1], [1, 1], [-1, 1], [1, -1], [-1, -1]
-    return [(grid[y + dy][x + dx], (x + dx, y + dy)) for dx, dy in movement if nextNodeCheck(x + dx, y + dy)]
+    return [(x + dx, y + dy) for dx, dy in movement if nextNodeCheck(x + dx, y + dy)]
 
 
 # Screen variables
@@ -49,22 +50,22 @@ pixels = img.transformer()
 # init pygame
 pygame.init
 # Title
-pygame.display.set_caption('A* Algorithm')
+pygame.display.set_caption('Breadth First Algorithm')
 # Set window
 win = pygame.display.set_mode((SCREEN_HEIGHT*MAP_SIZE, SCREEN_WIDTH*MAP_SIZE))
 # Timer
 clock = pygame.time.Clock()
 
 try:
-    start = DepthFirstType.findRed(pixels, 2)
+    start = BreadthFirstType.findRed(pixels, 2)
 except:
     print("No hay punto de inicio.")
 try:
-    grid = DepthFirstType.replaceColor(pixels, 2)
+    grid = BreadthFirstType.replaceColor(pixels, 2)
 except:
     print("El punto de inicio no ha sido encontrado.")
 try:
-    grid = DepthFirstType.replaceColor(pixels, 3)
+    grid = BreadthFirstType.replaceColor(pixels, 3)
 except:
     pass
 
@@ -72,18 +73,14 @@ except:
 dictionary = {}
 for y, row in enumerate(grid):
     for x, col in enumerate(row):
-        dictionary[(x, y)] = dictionary.get((x, y), []) + nextNodes(x, y)
+        if not col:
+            dictionary[(x, y)] = dictionary.get((x, y), []) + nextNodes(x, y)
 
 
-# DFS variables
+# BFS variables
 # Recordatorio para despues: 2 en pixels = rojo
 goal = start
 visited = {start: None}
-
-# Set map.bmp as background with value grid on top
-background = pygame.image.load("map.bmp").convert()
-background = pygame.transform.scale(
-    background, (SCREEN_HEIGHT * MAP_SIZE, SCREEN_WIDTH * MAP_SIZE))
 
 while True:
     # Escape condition
@@ -93,24 +90,26 @@ while True:
             sys.exit(0)
     # Draw 2D map
     # Fill window
-    win.blit(background, (0, 0))
+    win.fill(pygame.Color('white'))
     # Draw pixels
-    # BFS to goal
+    [[pygame.draw.rect(win, pygame.Color('black'), getRect(x, y))
+      for x, col in enumerate(row) if col] for y, row in enumerate(grid)]
+    # DFS to goal
     mouse = getGoal()
     if mouse and not grid[mouse[1]][mouse[0]]:
         queue, visited = DepthFirstType.solve(start, mouse, dictionary)
         goal = mouse
-
     # Draw path in real time
     head, segment = goal, goal
-    while segment:
+    while head and segment in visited:
         pygame.draw.rect(win, pygame.Color('magenta'), getRect(
-            *segment), MAP_SIZE, border_radius=0)
+            *segment), MAP_SIZE)
         segment = visited[segment]
     pygame.draw.rect(win, pygame.Color('green'), getRect(
-        *head), border_radius=0)
+        *head))
     pygame.draw.rect(win, pygame.Color('red'), getRect(
-        *start), border_radius=0)
+        *start))
+
     # Update display
     pygame.display.flip()
     # Set FPS

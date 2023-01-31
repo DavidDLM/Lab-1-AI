@@ -12,7 +12,7 @@ from collections import deque
 
 # Get rectangle based on MAP_SIZE
 def getRect(x, y):
-    return x * MAP_SIZE + 1, y * MAP_SIZE + 1, MAP_SIZE - 2, MAP_SIZE - 2
+    return x * MAP_SIZE + 1, y * MAP_SIZE + 1, MAP_SIZE, MAP_SIZE
 
 
 # Get goal based on mouseclick
@@ -92,7 +92,7 @@ while True:
     # Fill window
     win.fill(pygame.Color('white'))
     # Draw pixels
-    [[pygame.draw.rect(win, pygame.Color('black'), getRect(x, y), border_radius=0)
+    [[pygame.draw.rect(win, pygame.Color('black'), getRect(x, y))
       for x, col in enumerate(row) if col] for y, row in enumerate(grid)]
     # BFS to goal
     mouse = getGoal()
@@ -103,12 +103,12 @@ while True:
     head, segment = goal, goal
     while head and segment in visited:
         pygame.draw.rect(win, pygame.Color('magenta'), getRect(
-            *segment), MAP_SIZE, border_radius=0)
+            *segment), MAP_SIZE)
         segment = visited[segment]
     pygame.draw.rect(win, pygame.Color('green'), getRect(
-        *head), border_radius=0)
+        *head))
     pygame.draw.rect(win, pygame.Color('red'), getRect(
-        *start), border_radius=0)
+        *start))
 
     # Update display
     pygame.display.flip()

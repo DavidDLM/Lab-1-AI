@@ -11,7 +11,7 @@ import sys
 
 # Get rectangle based on MAP_SIZE
 def getRect(x, y):
-    return x * MAP_SIZE + 1, y * MAP_SIZE + 1, MAP_SIZE - 2, MAP_SIZE - 2
+    return x * MAP_SIZE + 1, y * MAP_SIZE + 1, MAP_SIZE, MAP_SIZE
 
 
 # Get goal based on mouseclick
@@ -98,7 +98,7 @@ while True:
     # BFS to goal
     mouse = getGoal()
     if mouse and not grid[mouse[1]][mouse[0]]:
-        visited = DepthFirstType.solve(start, mouse, dictionary)
+        queue, visited = DepthFirstType.solve(start, mouse, dictionary)
         goal = mouse
 
     # Draw path in real time

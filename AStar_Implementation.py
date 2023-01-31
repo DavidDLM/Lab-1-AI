@@ -10,7 +10,7 @@ from Framework import *
 
 # Get rectangle based on MAP_SIZE
 def getRect(x, y):
-    return x * MAP_SIZE + 1, y * MAP_SIZE + 1, MAP_SIZE - 2, MAP_SIZE - 2
+    return x * MAP_SIZE + 1, y * MAP_SIZE + 1, MAP_SIZE, MAP_SIZE
 
 
 # Get goal based on mouseclick
@@ -25,8 +25,11 @@ def getGoal():
 
 def nextNodes(x, y):
     # Check next nodes in nested function
-    def nextNodeCheck(
-        x, y): return True if 0 <= x < SCREEN_HEIGHT and 0 <= y < SCREEN_WIDTH else False
+    def nextNodeCheck(x, y):
+        if 0 <= x < SCREEN_HEIGHT and 0 <= y < SCREEN_WIDTH:
+            return True
+        else:
+            return False
     # Movement = right, left, up, down, diagonal: north east, north west, south east, south west
     movement = [1, 0], [-1, 0], [0,
                                  1], [0, -1], [1, 1], [-1, 1], [1, -1], [-1, -1]
